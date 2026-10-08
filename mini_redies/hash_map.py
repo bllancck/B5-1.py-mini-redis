@@ -2,7 +2,7 @@
 
 from typing import Any, List, Optional
 
-from linked_list import DoublyLinkedList, Node
+from .linked_list import DoublyLinkedList, Node
 
 
 class HashEntry:

@@ -3,9 +3,9 @@
 from time import time
 from typing import Callable, Optional
 
-from hash_map import HashMap
-from linked_list import DoublyLinkedList
-from min_heap import MinHeap
+from .hash_map import HashMap
+from .linked_list import DoublyLinkedList
+from .min_heap import MinHeap
 
 
 class MiniRedis:

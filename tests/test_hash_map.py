@@ -2,7 +2,7 @@
 
 import unittest
 
-from hash_map import HashMap
+from mini_redies.hash_map import HashMap
 
 
 class AlwaysCollidingHashMap(HashMap):

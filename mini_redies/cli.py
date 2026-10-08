@@ -3,7 +3,7 @@
 import shlex
 from typing import Callable, Optional, Tuple
 
-from mini_redis import MiniRedis
+from .core import MiniRedis
 
 
 class CommandProcessor:

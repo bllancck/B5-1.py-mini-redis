@@ -41,11 +41,12 @@ Redis 스타일 결과 출력
 | 경로 | 역할 |
 |---|---|
 | `main.py` | 프로그램 진입점 |
-| `cli.py` | 입력 파싱, 명령 검증, REPL 실행 |
-| `mini_redis.py` | 저장 명령과 LRU·메모리·TTL 상태 조정 |
-| `linked_list.py` | LRU와 해시 체이닝에 사용하는 이중 연결 리스트 |
-| `hash_map.py` | 직접 설계한 해시 함수와 체이닝 기반 Key-Value 저장소 |
-| `min_heap.py` | 가장 빠른 TTL 만료 시각 관리 |
+| `mini_redies/` | CLI, 저장소 로직과 핵심 자료구조를 묶은 애플리케이션 패키지 |
+| `mini_redies/cli.py` | 입력 파싱, 명령 검증, REPL 실행 |
+| `mini_redies/core.py` | 저장 명령과 LRU·메모리·TTL 상태 조정 |
+| `mini_redies/linked_list.py` | LRU와 해시 체이닝에 사용하는 이중 연결 리스트 |
+| `mini_redies/hash_map.py` | 직접 설계한 해시 함수와 체이닝 기반 Key-Value 저장소 |
+| `mini_redies/min_heap.py` | 가장 빠른 TTL 만료 시각 관리 |
 | `tests/` | 자료구조·명령·통합 동작 테스트 |
 
 ## 요구 환경

@@ -2,8 +2,8 @@
 
 import unittest
 
-from cli import CommandProcessor, run_cli
-from mini_redis import MiniRedis
+from mini_redies.cli import CommandProcessor, run_cli
+from mini_redies.core import MiniRedis
 
 
 class FakeClock:
