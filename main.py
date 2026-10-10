@@ -1,6 +1,6 @@
 """Mini Redis CLI의 진입점."""
 
-from mini_redies.cli import run_cli
+from mini_redis.cli import run_cli
 
 
 def main() -> None:

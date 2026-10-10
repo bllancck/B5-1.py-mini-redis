@@ -2,7 +2,7 @@
 
 import unittest
 
-from mini_redies.linked_list import DoublyLinkedList, Node
+from mini_redis.linked_list import DoublyLinkedList, Node
 
 
 class DoublyLinkedListTest(unittest.TestCase):

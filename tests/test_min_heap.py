@@ -2,7 +2,7 @@
 
 import unittest
 
-from mini_redies.min_heap import MinHeap
+from mini_redis.min_heap import MinHeap
 
 
 class MinHeapTest(unittest.TestCase):

@@ -2,7 +2,7 @@
 
 import unittest
 
-from mini_redies.core import MiniRedis
+from mini_redis.core import MiniRedis
 
 
 class LruTest(unittest.TestCase):
