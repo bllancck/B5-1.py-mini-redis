@@ -38,10 +38,10 @@ Mini Redis 명령 처리
 Redis 스타일 결과 출력
 ```
 
-### 코어가 관리하는 다섯 상태
+### 코어가 사용하는 다섯 핵심 자료구조
 
-`MiniRedis`는 실제 데이터, 최근 사용 순서와 만료 정보를 다음 다섯 상태로
-나누어 관리합니다.
+`MiniRedis`는 실제 데이터, 최근 사용 순서와 만료 정보를 다음 다섯 핵심
+자료구조로 나누어 관리합니다.
 
 | 변수 | 자료구조 | 저장하는 내용 | 역할 |
 |---|---|---|---|
@@ -75,7 +75,7 @@ MiniRedis
 | `mini_redis/cli.py` | 입력 파싱, 명령 검증, REPL 실행 |
 | `mini_redis/core.py` | 저장 명령과 LRU·메모리·TTL 상태 조정 |
 | `mini_redis/linked_list.py` | LRU와 해시 체이닝에 사용하는 이중 연결 리스트 |
-| `mini_redis/hash_map.py` | 직접 설계한 해시 함수와 체이닝 기반 Key-Value 저장소 |
+| `mini_redis/hash_map.py` | FNV-1a 방식으로 직접 구현한 해시 함수와 체이닝 기반 Key-Value 저장소 |
 | `mini_redis/min_heap.py` | 가장 빠른 TTL 만료 시각 관리 |
 | `tests/` | 자료구조·명령·통합 동작 테스트 |
 
@@ -83,8 +83,7 @@ MiniRedis
 
 - Python 3.8 이상
 
-외부 패키지는 필요하지 않습니다. Python 3.12.3 환경에서 실행과 테스트를
-검증했습니다.
+외부 패키지는 필요하지 않습니다.
 
 ## 실행 및 사용 방법
 
@@ -118,6 +117,17 @@ mini-redis> quit
 `exit` 또는 `quit`을 입력하면 종료합니다. `TTL` 결과는 명령 실행 시점에 따라
 달라질 수 있습니다.
 
+### EXPIRE와 TTL 응답
+
+| 상황 | 응답 | 의미 |
+|---|---|---|
+| 없는 Key에 `EXPIRE` | `(integer) 0` | 만료 시간을 설정하지 못함 |
+| 존재하는 Key에 양수 `EXPIRE` | `(integer) 1` | 만료 시각을 설정함 |
+| 존재하는 Key에 0 이하 `EXPIRE` | `(integer) 1` | Key를 즉시 삭제함 |
+| 없는 Key의 `TTL` | `(integer) -2` | Key가 존재하지 않음 |
+| TTL이 설정되지 않은 Key의 `TTL` | `(integer) -1` | Key는 존재하지만 만료되지 않음 |
+| TTL이 설정된 Key의 `TTL` | `(integer) N` | 남은 시간 `N`초 |
+
 ## 주요 동작과 제약
 
 - `maxmemory`가 `0`이면 메모리 제한이 없습니다.
@@ -126,6 +136,7 @@ mini-redis> quit
 - 설정 변경만으로 Key를 제거하지 않습니다. `SET` 후 한도를 초과하면 LRU
   순서로 자동 제거합니다.
 - 단일 Key-Value 크기가 한도보다 크면 저장하지 않고 OOM 오류를 반환합니다.
+- 같은 Key에 다시 `SET`하면 값을 덮어쓰며 Key 개수는 증가하지 않습니다.
 - `SET`으로 기존 Key를 덮어쓰면 이전 TTL을 초기화합니다.
 - 만료된 Key는 백그라운드 작업이 아니라 다음 명령에서 만료 힙을 확인할 때
   정리됩니다.
@@ -139,8 +150,8 @@ mini-redis> quit
 python3 -B -m unittest discover -s tests -v
 ```
 
-Python 3.12.3에서 전체 테스트 62개가 통과했습니다. 검증 범위는 다음과
-같습니다.
+Python 3.9.6과 3.12.3에서 전체 테스트 62개가 통과했습니다. 검증 범위는
+다음과 같습니다.
 
 - 세 자료구조의 필수 연산, 경계 조건, 해시 충돌과 버킷 확장
 - 기본 명령과 Redis 스타일 출력
