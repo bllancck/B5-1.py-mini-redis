@@ -51,15 +51,19 @@ Redis 스타일 결과 출력
 | `_expires` | 해시맵 | Key → 현재 유효한 만료 시각 | TTL 조회와 만료 기록의 유효성 확인 |
 | `_expiry_heap` | 최소 힙 | `(만료 시각, Key)` | 가장 이른 만료 후보 찾기 |
 
-```text
-MiniRedis
-├─ 실제 데이터: _store
-├─ 최근 사용 관리
-│  ├─ _lru: Key의 사용 순서
-│  └─ _lru_nodes: Key로 _lru 노드 참조
-└─ 만료 관리
-   ├─ _expires: 현재 유효한 만료 시각
-   └─ _expiry_heap: 이른 만료 후보
+```mermaid
+flowchart LR
+    CLI["CLI 명령"] --> CORE["MiniRedis<br/>상태 조정"]
+
+    CORE --> STORE["_store<br/>Key → Value"]
+
+    CORE --> LRU_INDEX["_lru_nodes<br/>Key → 노드 참조"]
+    CORE --> LRU["_lru<br/>최근 사용 순서"]
+    LRU_INDEX -.->|"노드를 바로 찾음"| LRU
+
+    CORE --> EXPIRES["_expires<br/>Key → 현재 만료 시각"]
+    CORE --> HEAP["_expiry_heap<br/>이른 만료 후보"]
+    HEAP -.->|"현재 기록인지 확인"| EXPIRES
 ```
 
 `_lru_nodes`는 `_lru`를 포함하는 구조가 아니라 `_lru`에 속한 노드를
