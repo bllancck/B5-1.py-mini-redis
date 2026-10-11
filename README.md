@@ -52,17 +52,19 @@ Redis 스타일 결과 출력
 | `_expiry_heap` | 최소 힙 | `(만료 시각, Key)` | 가장 이른 만료 후보 찾기 |
 
 ```mermaid
-flowchart LR
+flowchart TB
     CLI["CLI 명령"] --> CORE["MiniRedis<br/>상태 조정"]
 
     CORE --> STORE["_store<br/>Key → Value"]
+    CORE --> RECENCY["최근 사용 관리"]
+    CORE --> EXPIRY["만료 관리"]
 
-    CORE --> LRU_INDEX["_lru_nodes<br/>Key → 노드 참조"]
-    CORE --> LRU["_lru<br/>최근 사용 순서"]
+    RECENCY --> LRU_INDEX["_lru_nodes<br/>Key → 노드 참조"]
+    RECENCY --> LRU["_lru<br/>최근 사용 순서"]
     LRU_INDEX -.->|"노드를 바로 찾음"| LRU
 
-    CORE --> EXPIRES["_expires<br/>Key → 현재 만료 시각"]
-    CORE --> HEAP["_expiry_heap<br/>이른 만료 후보"]
+    EXPIRY --> EXPIRES["_expires<br/>Key → 현재 만료 시각"]
+    EXPIRY --> HEAP["_expiry_heap<br/>이른 만료 후보"]
     HEAP -.->|"현재 기록인지 확인"| EXPIRES
 ```
 
