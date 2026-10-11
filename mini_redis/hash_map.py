@@ -106,14 +106,13 @@ class HashMap:
         return self._size
 
     def _hash(self, key: str) -> int:
-        """문자열의 UTF-8 바이트를 FNV-1a 방식으로 혼합한다."""
+        """문자열의 UTF-8 바이트를 순서대로 누적해 해시값을 만든다."""
         if not isinstance(key, str):
             raise TypeError("key must be a string")
 
-        hash_value = 2166136261
+        hash_value = 0
         for byte in key.encode("utf-8"):
-            hash_value ^= byte
-            hash_value = (hash_value * 16777619) & 0xFFFFFFFF
+            hash_value = (hash_value * 37 + byte) & 0xFFFFFFFF
         return hash_value
 
     def _bucket_index(self, key: str) -> int:

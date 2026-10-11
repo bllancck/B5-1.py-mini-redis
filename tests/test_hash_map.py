@@ -89,6 +89,16 @@ class HashMapTest(unittest.TestCase):
         with self.assertRaises(TypeError):
             hash_map.put(123, "invalid")
 
+    def test_hash_is_deterministic_and_reflects_byte_order(self) -> None:
+        hash_map = HashMap()
+
+        self.assertEqual(hash_map._hash("name"), 5708757)
+        self.assertEqual(hash_map._hash("abc"), hash_map._hash("abc"))
+        self.assertNotEqual(hash_map._hash("abc"), hash_map._hash("cba"))
+        self.assertEqual(hash_map._bucket_index("name"), 5)
+        self.assertGreaterEqual(hash_map._hash("사용자"), 0)
+        self.assertLessEqual(hash_map._hash("사용자"), 0xFFFFFFFF)
+
 
 if __name__ == "__main__":
     unittest.main()
