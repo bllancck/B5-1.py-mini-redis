@@ -100,6 +100,39 @@ python3 main.py
 실행 후 `mini-redis>` 프롬프트에서 명령을 입력합니다. 명령은 대소문자를
 구분하지 않으며, 공백이 포함된 값은 큰따옴표로 감쌀 수 있습니다.
 
+### 지원 명령어
+
+아래 표에서 `key`와 `value`는 원하는 문자열로 바꾸어 입력합니다. `bytes`와
+`seconds`에는 정수를 입력합니다.
+
+| 명령어 형식 | 사용 예시 | 설명 |
+|---|---|---|
+| `SET key value` | `SET name Alice` | Key에 문자열 Value를 저장합니다. 기존 Key이면 Value를 덮어씁니다. |
+| `GET key` | `GET name` | Key의 Value를 조회합니다. 없는 Key이면 `(nil)`을 출력합니다. |
+| `DEL key` | `DEL name` | Key를 삭제합니다. 삭제하면 1, 없는 Key이면 0을 출력합니다. |
+| `EXISTS key` | `EXISTS name` | Key가 있으면 1, 없으면 0을 출력합니다. |
+| `DBSIZE` | `DBSIZE` | 현재 저장된 Key 개수를 출력합니다. |
+| `KEYS` | `KEYS` | 현재 저장된 모든 Key를 출력합니다. `KEYS *`는 지원하지 않습니다. |
+| `CONFIG SET maxmemory bytes` | `CONFIG SET maxmemory 100` | 메모리 제한을 바이트 단위로 설정합니다. 0은 제한 없음입니다. |
+| `INFO memory` | `INFO memory` | 현재 사용량, 메모리 제한과 LRU 제거 횟수를 출력합니다. |
+| `EXPIRE key seconds` | `EXPIRE name 60` | Key가 지정한 초 뒤에 만료되도록 설정합니다. |
+| `TTL key` | `TTL name` | Key의 남은 만료 시간을 초 단위로 출력합니다. |
+| `quit` 또는 `exit` | `quit` | Mini Redis를 종료합니다. |
+
+Value에 공백이 들어가면 다음과 같이 큰따옴표로 감쌉니다.
+
+```text
+mini-redis> SET greeting "Hello Mini Redis"
+OK
+mini-redis> GET greeting
+"Hello Mini Redis"
+```
+
+### 수동 테스트 예시
+
+다음 명령을 위에서부터 차례로 입력하면 저장, 조회, TTL과 메모리 정보를
+직접 확인할 수 있습니다.
+
 ```text
 mini-redis> CONFIG SET maxmemory 100
 OK
