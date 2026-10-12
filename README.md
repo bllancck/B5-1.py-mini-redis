@@ -36,7 +36,6 @@ B5-1.py-mini-redis/
 ├── scripts/
 │   └── evaluation_demo.py      # 주요 기능을 한 번에 실행하는 데모
 ├── tests/                      # 기능과 자료구조 자동 테스트
-├── docs/                       # 학습 및 평가 참고 문서
 └── README.md                   # 프로젝트 설명과 사용 방법
 ```
 
