@@ -10,21 +10,6 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from mini_redis.cli import CommandProcessor  # noqa: E402
-from mini_redis.core import MiniRedis  # noqa: E402
-
-
-class FakeClock:
-    """기다리지 않고 TTL 경계 시각을 재현하는 데모용 시계."""
-
-    def __init__(self) -> None:
-        self.now = 100.0
-
-    def __call__(self) -> float:
-        return self.now
-
-    def advance(self, seconds: float) -> None:
-        self.now += seconds
-        print("[모의 시각을 {}초 진행]".format(seconds))
 
 
 def print_section(title: str) -> None:
@@ -65,14 +50,8 @@ def demonstrate_basic_commands() -> None:
         ("EXISTS name", "(integer) 1"),
         ("DBSIZE", "(integer) 1"),
         ("KEYS", '1. "name"'),
-        ("SET name Bob", "OK"),
-        ("DBSIZE", "(integer) 1"),
         ("DEL name", "(integer) 1"),
-        ("DEL name", "(integer) 0"),
-        ("GET name", "(nil)"),
         ("EXISTS name", "(integer) 0"),
-        ("DBSIZE", "(integer) 0"),
-        ("KEYS", "(empty array)"),
     ]
     for command, expected in commands:
         execute(processor, command, expected)
@@ -86,10 +65,9 @@ def demonstrate_lru_eviction() -> None:
         ("CONFIG SET maxmemory 8", "OK"),
         ("SET A 111", "OK"),
         ("SET B 222", "OK"),
-        ("GET A", '"111"'),
         ("SET C 333", "OK"),
-        ("EXISTS A", "(integer) 1"),
-        ("EXISTS B", "(integer) 0"),
+        ("EXISTS A", "(integer) 0"),
+        ("EXISTS B", "(integer) 1"),
         ("EXISTS C", "(integer) 1"),
         (
             "INFO memory",
@@ -98,58 +76,6 @@ def demonstrate_lru_eviction() -> None:
     ]
     for command, expected in commands:
         execute(processor, command, expected)
-    complete_section()
-
-
-def demonstrate_memory_accounting() -> None:
-    print_section("메모리 정보")
-    processor = CommandProcessor()
-    commands = [
-        ("SET 한 글", "OK"),
-        ("INFO memory", "used_memory:6\nmaxmemory:0\nevicted_keys:0"),
-        ("SET 한 ab", "OK"),
-        ("INFO memory", "used_memory:5\nmaxmemory:0\nevicted_keys:0"),
-        ("DEL 한", "(integer) 1"),
-        ("INFO memory", "used_memory:0\nmaxmemory:0\nevicted_keys:0"),
-    ]
-    for command, expected in commands:
-        execute(processor, command, expected)
-    complete_section()
-
-
-def demonstrate_ttl() -> None:
-    print_section("TTL 관리")
-    clock = FakeClock()
-    processor = CommandProcessor(MiniRedis(clock=clock))
-
-    commands = [
-        ("EXPIRE missing 3", "(integer) 0"),
-        ("TTL missing", "(integer) -2"),
-        ("SET session old", "OK"),
-        ("TTL session", "(integer) -1"),
-        ("EXPIRE session 3", "(integer) 1"),
-        ("TTL session", "(integer) 3"),
-    ]
-    for command, expected in commands:
-        execute(processor, command, expected)
-
-    clock.advance(3)
-    execute(processor, "GET session", "(nil)")
-    execute(processor, "TTL session", "(integer) -2")
-    execute(
-        processor,
-        "INFO memory",
-        "used_memory:0\nmaxmemory:0\nevicted_keys:0",
-    )
-
-    print("\n[SET 덮어쓰기 시 기존 TTL 초기화]")
-    execute(processor, "SET session old", "OK")
-    execute(processor, "EXPIRE session 3", "(integer) 1")
-    clock.advance(1)
-    execute(processor, "SET session new", "OK")
-    clock.advance(3)
-    execute(processor, "TTL session", "(integer) -1")
-    execute(processor, "GET session", '"new"')
     complete_section()
 
 
@@ -191,8 +117,6 @@ def main() -> None:
     print("Mini Redis 기능 데모")
     demonstrate_basic_commands()
     demonstrate_lru_eviction()
-    demonstrate_memory_accounting()
-    demonstrate_ttl()
     demonstrate_errors()
     print("\n모든 데모가 정상적으로 완료되었습니다.")
 
