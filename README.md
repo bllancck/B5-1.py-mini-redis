@@ -21,6 +21,27 @@ Redis 스타일의 핵심 동작을 단순화해 구현한 학습 프로젝트�
 
 ## 구조
 
+### 폴더 및 파일 구조
+
+```text
+B5-1.py-mini-redis/
+├── main.py                     # Mini Redis CLI 실행 진입점
+├── mini_redis/                 # 애플리케이션 코드
+│   ├── __init__.py
+│   ├── cli.py                  # 명령어 파싱, 검증과 REPL 실행
+│   ├── core.py                 # 저장 명령과 LRU·메모리·TTL 상태 관리
+│   ├── hash_map.py             # 체이닝 방식의 해시맵
+│   ├── linked_list.py          # 이중 연결 리스트
+│   └── min_heap.py             # TTL 만료 순서를 관리하는 최소 힙
+├── scripts/
+│   └── evaluation_demo.py      # 주요 기능을 한 번에 실행하는 데모
+├── tests/                      # 기능과 자료구조 자동 테스트
+├── docs/                       # 학습 및 평가 참고 문서
+└── README.md                   # 프로젝트 설명과 사용 방법
+```
+
+### 실행 흐름
+
 Mini Redis는 다음과 같은 흐름으로 구성되어 있습니다.
 
 ```text
@@ -71,17 +92,6 @@ flowchart TB
 포함 관계가 아닙니다. 만료 시간이 다시 설정되거나 삭제되면 힙에 예전 기록이
 남을 수 있으므로, `_expires`의 현재 만료 시각과 일치하는 기록만 유효한 것으로
 처리합니다.
-
-| 경로 | 역할 |
-|---|---|
-| `main.py` | 프로그램 진입점 |
-| `mini_redis/` | CLI, 저장소 로직과 핵심 자료구조를 묶은 애플리케이션 패키지 |
-| `mini_redis/cli.py` | 입력 파싱, 명령 검증, REPL 실행 |
-| `mini_redis/core.py` | 저장 명령과 LRU·메모리·TTL 상태 조정 |
-| `mini_redis/linked_list.py` | LRU와 해시 체이닝에 사용하는 이중 연결 리스트 |
-| `mini_redis/hash_map.py` | UTF-8 바이트를 누적하는 직접 설계 해시 함수와 체이닝 기반 Key-Value 저장소 |
-| `mini_redis/min_heap.py` | 가장 빠른 TTL 만료 시각 관리 |
-| `tests/` | 자료구조·명령·통합 동작 테스트 |
 
 ## 요구 환경
 
