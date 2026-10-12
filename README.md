@@ -16,7 +16,7 @@ Redis 스타일의 핵심 동작을 단순화해 구현한 학습 프로젝트�
 | 기본 명령 | `SET`, `GET`, `DEL`, `EXISTS`, `DBSIZE`, `KEYS` |
 | 메모리 관리 | `CONFIG SET maxmemory`, `INFO memory`, LRU 자동 제거 |
 | 만료 관리 | `EXPIRE`, `TTL`, 최소 힙 기반 만료 처리 |
-| CLI | `mini-redis>` REPL, 큰따옴표 값, Redis 스타일 결과와 오류 |
+| CLI | `mini-redis>` REPL, 따옴표를 이용한 공백 포함 값, Redis 스타일 결과와 오류 |
 | 핵심 자료구조 | 직접 구현한 체이닝 해시맵, 이중 연결 리스트, 최소 힙 |
 
 ## 구조
@@ -37,10 +37,7 @@ Mini Redis 명령 처리
 Redis 스타일 결과 출력
 ```
 
-### 코어가 사용하는 다섯 핵심 자료구조
-
-`MiniRedis`는 실제 데이터, 최근 사용 순서와 만료 정보를 다음 다섯 핵심
-자료구조로 나누어 관리합니다.
+### `MiniRedis`가 사용하는 다섯 핵심 자료구조
 
 | 변수 | 자료구조 | 저장하는 내용 | 역할 |
 |---|---|---|---|
@@ -54,9 +51,11 @@ Redis 스타일 결과 출력
 flowchart TB
     CLI["CLI 명령"] --> CORE["MiniRedis<br/>상태 조정"]
 
-    CORE --> STORE["_store<br/>Key → Value"]
+    CORE --> DATA["데이터 저장·조회"]
     CORE --> RECENCY["최근 사용 관리"]
     CORE --> EXPIRY["만료 관리"]
+
+    DATA --> STORE["_store<br/>Key → Value"]
 
     RECENCY --> LRU_INDEX["_lru_nodes<br/>Key → 노드 참조"]
     RECENCY --> LRU["_lru<br/>최근 사용 순서"]
