@@ -17,7 +17,7 @@ Redis 스타일의 핵심 동작을 단순화해 구현한 학습 프로젝트�
 | 메모리 관리 | `CONFIG SET maxmemory`, `INFO memory`, LRU 자동 제거 |
 | 만료 관리 | `EXPIRE`, `TTL`, 최소 힙 기반 만료 처리 |
 | CLI | `mini-redis>` REPL, 따옴표를 이용한 공백 포함 값, Redis 스타일 결과와 오류 |
-| 핵심 자료구조 | 직접 구현한 체이닝 해시맵, 이중 연결 리스트, 최소 힙 |
+| 핵심 자료구조 | 직접 구현한 체이닝 해시맵, 이중 연결 리스트, 최소 힙 ([다이어그램으로 보기](DATA_STRUCTURES.md)) |
 
 ## 구조
 
@@ -26,6 +26,7 @@ Redis 스타일의 핵심 동작을 단순화해 구현한 학습 프로젝트�
 ```text
 B5-1.py-mini-redis/
 ├── main.py                     # Mini Redis CLI 실행 진입점
+├── DATA_STRUCTURES.md          # 예시 데이터로 살펴보는 자료구조 다이어그램
 ├── mini_redis/                 # 애플리케이션 코드
 │   ├── __init__.py
 │   ├── cli.py                  # 명령어 파싱, 검증과 REPL 실행
@@ -41,7 +42,9 @@ B5-1.py-mini-redis/
 
 ### 실행 흐름
 
-Mini Redis는 다음과 같은 흐름으로 구성되어 있습니다.
+Mini Redis는 다음과 같은 흐름으로 구성되어 있습니다. 각 자료구조의 실제 내부
+상태와 동작 변화는 [Mini Redis의 메모리 속 들여다보기](DATA_STRUCTURES.md)에서
+예시 데이터와 다이어그램으로 자세히 확인할 수 있습니다.
 
 ```text
 사용자 명령
